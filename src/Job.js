@@ -5,7 +5,7 @@ export default function Job({ job }) {
   const [show, setShow] = useState(false);
 
   return (
-    <Card>
+    <Card className="mb-5">
       <Card.Body>
         <div className="d-flex justify-content-beetwen">
           <div>
