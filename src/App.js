@@ -11,7 +11,7 @@ function App() {
   const { jobs, loading, error } = useFetchjobs(params, page);
   return (
     <Container className="my-5">
-      <h1 className="mb-4">Latest GitHub Jobs</h1>
+      <h1 className="mb-4 text-center">Latest GitHub Jobs</h1>
 
       <JobsPagination page={page} setPage={setPage} />
       {loading && <h2>...Loading</h2>}
