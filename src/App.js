@@ -23,7 +23,9 @@ function App() {
 
   return (
     <Container className="my-5">
-      <h1 className="mb-4 text-center">Latest GitHub Jobs</h1>
+      <h1 className="mb-4 text-center text-primary font-weight-bold">
+        Latest GitHub Jobs
+      </h1>
 
       <Search params={params} onParamChange={handleParamsChange} />
       <JobsPagination page={page} setPage={setPage} hasNextPage />
