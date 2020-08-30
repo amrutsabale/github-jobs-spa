@@ -5,6 +5,7 @@ const ACTIONS = {
   MAKE_REQUEST: "make-request",
   GET_DATA: "get-data",
   ERROR: "error",
+  UPDATE_HAS_NEXT_PAGE: "update_has_next_page",
 };
 
 const jobsReducer = (state, action) => {
@@ -20,6 +21,8 @@ const jobsReducer = (state, action) => {
         error: action.payload.error,
         jobs: [],
       };
+    case ACTIONS.UPDATE_HAS_NEXT_PAGE:
+      return { ...state, hasNextPage: action.payload.hasNextPage };
 
     default:
       return state;
@@ -35,9 +38,9 @@ export default function useFetchjobs(params, page) {
     "https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json";
 
   useEffect(() => {
-    const cancelToken = axios.CancelToken.source();
-
     dispatch({ type: ACTIONS.MAKE_REQUEST });
+
+    const cancelToken1 = axios.CancelToken.source();
     axios
       .get(BASE_URL, {
         params: {
@@ -48,14 +51,34 @@ export default function useFetchjobs(params, page) {
       })
       .then((res) => {
         dispatch({ type: ACTIONS.GET_DATA, payload: { jobs: res.data } });
+      });
+
+    const cancelToken2 = axios.CancelToken.source();
+    axios
+      .get(BASE_URL, {
+        params: {
+          markdown: true,
+          page: page + 1,
+          ...params,
+        },
       })
+      .then((res) => {
+        dispatch({
+          type: ACTIONS.UPDATE_HAS_NEXT_PAGE,
+          payload: { hasNextPage: res.data.length !== 0 },
+        });
+      })
+
       .catch((e) => {
         if (axios.isCancel(e)) return;
 
         dispatch({ type: ACTIONS.ERROR, payload: { error: e } });
       });
 
-    return () => cancelToken.cancel();
+    return () => {
+      cancelToken1.cancel();
+      cancelToken2.cancel();
+    };
   }, [params, page]);
 
   return state;
